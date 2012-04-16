@@ -114,11 +114,13 @@ class Loader(object):
 
 
 def updatedRequirements():
-
     try:
         from pip.index import PackageFinder
         from pip.locations import build_prefix, src_prefix
         from pip.req import InstallRequirement, RequirementSet
+        from pip.log import logger
+
+        logger.consumers.append((logger.INFO, sys.stdout))
     except ImportError:
         print 'You need pip (http://pypi.python.org/pypi/pip) to use CouchPotato from source'
         raise
@@ -144,9 +146,6 @@ def updatedRequirements():
     for requirement in requirement_set.requirements.values():
         updates += 1 if requirement.install_succeeded else 0
         failed += 1 if not requirement.install_succeeded and not requirement.satisfied_by else 0
-
-    if failed > 0:
-        print 'Failed installing'
 
     return updates > 0
 
