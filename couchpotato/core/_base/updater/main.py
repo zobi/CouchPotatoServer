@@ -6,9 +6,6 @@ from couchpotato.core.plugins.base import Plugin
 from couchpotato.environment import Env
 from datetime import datetime
 from git.repository import LocalRepository
-from pip.index import PackageFinder
-from pip.locations import build_prefix, src_prefix
-from pip.req import InstallRequirement, RequirementSet
 import os
 import time
 import traceback
@@ -48,11 +45,6 @@ class Updater(Plugin):
         self.app_dir = Env.get('app_dir')
         self.repo = CPRepo(self.app_dir, command = self.conf('git_command', default = 'git'))
 
-        def test():
-            self.updateRequirements()
-            #subprocess.call(['pip', 'install', '-r', os.path.join(self.app_dir, 'requirements.txt')])
-        addEvent('app.load', test)
-
         fireEvent('schedule.interval', 'updater.check', self.check, hours = 6)
 
         addEvent('app.load', self.check)
@@ -73,26 +65,6 @@ class Updater(Plugin):
             'desc': 'Check for available update',
             'return': {'type': 'see updater.info'}
         })
-
-    def updateRequirements(self):
-        requirement_set = RequirementSet(build_dir = build_prefix, src_dir = src_prefix, download_dir = None)
-
-        f = open(os.path.join(self.app_dir, 'requirements.txt'))
-        lines = f.readlines()
-        f.close()
-
-        for line in lines:
-            requirement_set.add_requirement(InstallRequirement.from_line(line.strip(), None))
-
-        finder = PackageFinder(find_links = [], index_urls = ["http://pypi.python.org/simple/"])
-
-        install_options = []
-        global_options = []
-        requirement_set.prepare_files(finder, force_root_egg_info = False, bundle = False)
-        requirement_set.install(install_options, global_options)
-
-        for requirement in requirement_set.requirements.values():
-            print requirement.install_succeeded or requirement.satisfied_by
 
 
     def getInfo(self):
@@ -176,10 +148,6 @@ class Updater(Plugin):
 
             # Delete leftover .pyc files
             self.deletePyc()
-
-            # Update libs
-            #bin = 'Scripts' if sys.platform == 'win32' else 'bin'
-            #subprocess.call([os.path.join(home_dir, bin, 'pip'),'install', '-r', os.path.join(self.app_dir, 'requirements.txt')])
 
             # Notify before returning and restarting
             version_date = datetime.fromtimestamp(info['update_version']['date'])

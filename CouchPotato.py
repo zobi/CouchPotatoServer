@@ -9,21 +9,21 @@ import subprocess
 import sys
 import traceback
 
-
 # Root path
 base_path = dirname(os.path.abspath(__file__))
 
 # Insert local directories into path
 sys.path.insert(0, os.path.join(base_path, 'libs'))
 
-from couchpotato.environment import Env
-from couchpotato.core.helpers.variable import getDataDir
-
 class Loader(object):
 
     do_restart = False
 
     def __init__(self):
+
+        from couchpotato.environment import Env
+        from couchpotato.core.helpers.variable import getDataDir
+        self.Env = Env
 
         # Get options via arg
         from couchpotato.runner import getOptions
@@ -76,7 +76,7 @@ class Loader(object):
         self.addSignals()
 
         from couchpotato.runner import runCouchPotato
-        runCouchPotato(self.options, base_path, sys.argv[1:], data_dir = self.data_dir, log_dir = self.log_dir, Env = Env)
+        runCouchPotato(self.options, base_path, sys.argv[1:], data_dir = self.data_dir, log_dir = self.log_dir, Env = self.Env)
 
         if self.do_restart:
             self.restart()
@@ -113,29 +113,71 @@ class Loader(object):
         return self.options.daemon and  self.options.pid_file
 
 
-if __name__ == '__main__':
+def updatedRequirements():
+
     try:
-        l = Loader()
-        l.daemonize()
-        l.run()
-    except KeyboardInterrupt:
-        pass
-    except SystemExit:
+        from pip.index import PackageFinder
+        from pip.locations import build_prefix, src_prefix
+        from pip.req import InstallRequirement, RequirementSet
+    except ImportError:
+        print 'You need pip (http://pypi.python.org/pypi/pip) to use CouchPotato from source'
         raise
-    except socket.error as (nr, msg):
-        # log when socket receives SIGINT, but continue.
-        # previous code would have skipped over other types of IO errors too.
-        if nr != 4:
+
+    requirement_set = RequirementSet(build_dir = build_prefix, src_dir = src_prefix, download_dir = None)
+
+    f = open(os.path.join(base_path, 'requirements.txt'))
+    lines = f.readlines()
+    f.close()
+
+    for line in lines:
+        requirement_set.add_requirement(InstallRequirement.from_line(line.strip(), None))
+
+    finder = PackageFinder(find_links = [], index_urls = ["http://pypi.python.org/simple/"])
+
+    install_options = []
+    global_options = []
+    requirement_set.prepare_files(finder, force_root_egg_info = False, bundle = False)
+    requirement_set.install(install_options, global_options)
+
+    updates = 0
+    failed = 0
+    for requirement in requirement_set.requirements.values():
+        updates += 1 if requirement.install_succeeded else 0
+        failed += 1 if not requirement.install_succeeded and not requirement.satisfied_by else 0
+
+    if failed > 0:
+        print 'Failed installing'
+
+    return updates > 0
+
+
+if __name__ == '__main__':
+    if updatedRequirements():
+        args = [sys.executable] + [os.path.join(base_path, __file__)] + sys.argv[1:]
+        subprocess.Popen(args)
+    else:
+        try:
+            l = Loader()
+            l.daemonize()
+            l.run()
+        except KeyboardInterrupt:
+            pass
+        except SystemExit:
+            raise
+        except socket.error as (nr, msg):
+            # log when socket receives SIGINT, but continue.
+            # previous code would have skipped over other types of IO errors too.
+            if nr != 4:
+                try:
+                    l.log.critical(traceback.format_exc())
+                except:
+                    print traceback.format_exc()
+                raise
+        except:
             try:
+                # if this fails we will have two tracebacks
+                # one for failing to log, and one for the exception that got us here.
                 l.log.critical(traceback.format_exc())
             except:
                 print traceback.format_exc()
             raise
-    except:
-        try:
-            # if this fails we will have two tracebacks
-            # one for failing to log, and one for the exception that got us here.
-            l.log.critical(traceback.format_exc())
-        except:
-            print traceback.format_exc()
-        raise
