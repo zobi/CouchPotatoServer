@@ -4,13 +4,30 @@ from couchpotato.core.helpers.request import jsonified
 from couchpotato.core.logger import CPLog
 from couchpotato.core.plugins.base import Plugin
 from couchpotato.environment import Env
-from git.repository import LocalRepository
 from datetime import datetime
+from git.repository import LocalRepository
 import os
 import time
 import traceback
 
 log = CPLog(__name__)
+
+
+class CPRepo(LocalRepository):
+
+    _git_command = None
+
+    def __init__(self, path, command = 'git'):
+        self.setCommand(command)
+        super(CPRepo, self).__init__(path)
+
+    def setCommand(self, command):
+        self._git_command = command
+
+    def _executeGitCommand(self, command, cwd = None):
+        command = '%s %s' % (self._git_command, str(command.replace('git ', '')))
+
+        return super(CPRepo, self)._executeGitCommand(command, cwd)
 
 
 class Updater(Plugin):
@@ -24,7 +41,7 @@ class Updater(Plugin):
 
     def __init__(self):
 
-        self.repo = LocalRepository(Env.get('app_dir'), command = self.conf('git_command', default = 'git'))
+        self.repo = CPRepo(Env.get('app_dir'), command = self.conf('git_command', default = 'git'))
 
         fireEvent('schedule.interval', 'updater.check', self.check, hours = 6)
 

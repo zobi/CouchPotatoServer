@@ -18,3 +18,4 @@ sqlalchemy-migrate==0.7.2
 subliminal==0.5.1
 transmissionrpc==0.8
 oauth2==1.5.211
+gitpy==0.5
