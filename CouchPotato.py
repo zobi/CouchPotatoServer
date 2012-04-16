@@ -118,9 +118,6 @@ def updatedRequirements():
         from pip.index import PackageFinder
         from pip.locations import build_prefix, src_prefix
         from pip.req import InstallRequirement, RequirementSet
-        from pip.log import logger
-
-        logger.consumers.append((logger.INFO, sys.stdout))
     except ImportError:
         print 'You need pip (http://pypi.python.org/pypi/pip) to use CouchPotato from source'
         raise
