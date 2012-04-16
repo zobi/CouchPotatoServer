@@ -4,7 +4,7 @@ from couchpotato.core.logger import CPLog
 from couchpotato.core.plugins.base import Plugin
 from couchpotato.core.settings.model import Library, FileType
 from couchpotato.environment import Env
-import subliminal
+from subliminal.api import list_subtitles, download_subtitles
 
 log = CPLog(__name__)
 
@@ -36,7 +36,7 @@ class Subtitle(Plugin):
                         files.append(file.path);
 
                     # get subtitles for those files
-                    subliminal.list_subtitles(files, cache_dir = Env.get('cache_dir'), multi = True, languages = self.getLanguages(), services = self.services)
+                    list_subtitles(files, cache_dir = Env.get('cache_dir'), multi = True, languages = self.getLanguages(), services = self.services)
 
     def searchSingle(self, group):
 
@@ -46,7 +46,7 @@ class Subtitle(Plugin):
         downloaded = []
         for lang in self.getLanguages():
             if lang not in available_languages:
-                download = subliminal.download_subtitles(group['files']['movie'], multi = True, force = False, languages = [lang], services = self.services, cache_dir = Env.get('cache_dir'))
+                download = download_subtitles(group['files']['movie'], multi = True, force = False, languages = [lang], services = self.services, cache_dir = Env.get('cache_dir'))
                 downloaded.extend(download)
 
         for d_sub in downloaded:

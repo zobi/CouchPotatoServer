@@ -2,7 +2,7 @@ from base64 import b64encode
 from couchpotato.core.downloaders.base import Downloader
 from couchpotato.core.helpers.encoding import isInt
 from couchpotato.core.logger import CPLog
-from libs import transmissionrpc
+import transmissionrpc
 
 log = CPLog(__name__)
 

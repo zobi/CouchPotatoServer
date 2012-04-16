@@ -1,8 +1,8 @@
 from couchpotato.core.helpers.variable import natcmp
 from flask.globals import current_app
 from flask.helpers import json
-from libs.werkzeug.urls import url_decode
 from urllib import unquote_plus
+from werkzeug.urls import url_decode
 import flask
 import re
 
