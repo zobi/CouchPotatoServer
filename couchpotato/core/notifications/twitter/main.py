@@ -1,13 +1,13 @@
 from couchpotato.api import addApiView
+from couchpotato.core.helpers.encoding import tryUrlencode
 from couchpotato.core.helpers.request import jsonified, getParam
 from couchpotato.core.helpers.variable import cleanHost
 from couchpotato.core.logger import CPLog
 from couchpotato.core.notifications.base import Notification
 from flask.helpers import url_for
+from pytwitter import Api, parse_qsl
 from werkzeug.utils import redirect
 import oauth2
-import twitter as pytwitter
-import urllib
 
 log = CPLog(__name__)
 
@@ -34,7 +34,7 @@ class Twitter(Notification):
     def notify(self, message = '', data = {}):
         if self.isDisabled(): return
 
-        api = pytwitter.Api(self.consumer_key, self.consumer_secret, self.conf('access_token_key'), self.conf('access_token_secret'))
+        api = Api(self.consumer_key, self.consumer_secret, self.conf('access_token_key'), self.conf('access_token_secret'))
 
         mention = self.conf('mention')
         if mention:
@@ -56,7 +56,7 @@ class Twitter(Notification):
         oauth_consumer = oauth2.Consumer(self.consumer_key, self.consumer_secret)
         oauth_client = oauth2.Client(oauth_consumer)
 
-        resp, content = oauth_client.request(self.urls['request'], 'POST', body = urllib.urlencode({'oauth_callback': callback_url}))
+        resp, content = oauth_client.request(self.urls['request'], 'POST', body = tryUrlencode({'oauth_callback': callback_url}))
 
         if resp['status'] != '200':
             log.error('Invalid response from Twitter requesting temp token: %s' % resp['status'])
@@ -64,7 +64,7 @@ class Twitter(Notification):
                 'success': False,
             })
         else:
-            self.request_token = dict(pytwitter.parse_qsl(content))
+            self.request_token = dict(parse_qsl(content))
 
             auth_url = self.urls['authorize'] + ("?oauth_token=%s" % self.request_token['oauth_token'])
 
@@ -85,7 +85,7 @@ class Twitter(Notification):
         oauth_client = oauth2.Client(oauth_consumer, token)
 
         resp, content = oauth_client.request(self.urls['access'], method = 'POST', body = 'oauth_verifier=%s' % key)
-        access_token = dict(pytwitter.parse_qsl(content))
+        access_token = dict(parse_qsl(content))
 
         if resp['status'] != '200':
             log.error('The request for an access token did not succeed: %s' % resp['status'])

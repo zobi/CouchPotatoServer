@@ -1,8 +1,10 @@
 from couchpotato import get_session
 from couchpotato.api import addApiView
 from couchpotato.core.event import fireEvent, fireEventAsync, addEvent
-from couchpotato.core.helpers.encoding import toUnicode
-from couchpotato.core.helpers.request import getParams, jsonified
+from couchpotato.core.helpers.encoding import toUnicode, tryUrlencode, \
+    simplifyString
+from couchpotato.core.helpers.request import getParams, jsonified, getParam
+from couchpotato.core.helpers.variable import getImdb
 from couchpotato.core.logger import CPLog
 from couchpotato.core.plugins.base import Plugin
 from couchpotato.core.settings.model import Movie, Library, LibraryTitle
@@ -10,7 +12,6 @@ from couchpotato.environment import Env
 from sqlalchemy.orm import joinedload_all
 from sqlalchemy.sql.expression import or_, asc, not_
 from string import ascii_lowercase
-from urllib import urlencode
 
 log = CPLog(__name__)
 
@@ -138,7 +139,7 @@ class MoviePlugin(Plugin):
 
 
         if limit_offset:
-            splt = limit_offset.split(',')
+            splt = [x.strip() for x in limit_offset.split(',')]
             limit = splt[0]
             offset = 0 if len(splt) is 1 else splt[1]
             q2 = q2.limit(limit).offset(offset)
@@ -225,7 +226,6 @@ class MoviePlugin(Plugin):
             if title.default: default_title = title.title
 
         if movie:
-            #addEvent('library.update.after', )
             fireEventAsync('library.update', identifier = movie.library.identifier, default_title = default_title, force = True)
             fireEventAsync('searcher.single', movie.to_dict(self.default_dict))
 
@@ -235,12 +235,16 @@ class MoviePlugin(Plugin):
 
     def search(self):
 
-        params = getParams()
-        cache_key = '%s/%s' % (__name__, urlencode(params))
+        q = getParam('q')
+        cache_key = u'%s/%s' % (__name__, simplifyString(q))
         movies = Env.get('cache').get(cache_key)
 
         if not movies:
-            movies = fireEvent('movie.search', q = params.get('q'), merge = True)
+
+            if getImdb(q):
+                movies = [fireEvent('movie.info', identifier = q, merge = True)]
+            else:
+                movies = fireEvent('movie.search', q = q, merge = True)
             Env.get('cache').set(cache_key, movies)
 
         return jsonified({
@@ -320,7 +324,7 @@ class MoviePlugin(Plugin):
 
         available_status = fireEvent('status.get', 'available', single = True)
 
-        ids = params.get('id').split(',')
+        ids = [x.strip() for x in params.get('id').split(',')]
         for movie_id in ids:
 
             m = db.query(Movie).filter_by(id = movie_id).first()
@@ -335,7 +339,7 @@ class MoviePlugin(Plugin):
             # Default title
             if params.get('default_title'):
                 for title in m.library.titles:
-                    title.default = params.get('default_title').lower() == title.title.lower()
+                    title.default = toUnicode(params.get('default_title', '')).lower() == toUnicode(title.title).lower()
 
             db.commit()
 
@@ -352,7 +356,7 @@ class MoviePlugin(Plugin):
 
         params = getParams()
 
-        ids = params.get('id').split(',')
+        ids = [x.strip() for x in params.get('id').split(',')]
         for movie_id in ids:
             self.delete(movie_id)
 
@@ -365,8 +369,9 @@ class MoviePlugin(Plugin):
         db = get_session()
 
         movie = db.query(Movie).filter_by(id = movie_id).first()
-        db.delete(movie)
-        db.commit()
+        if movie:
+            db.delete(movie)
+            db.commit()
 
         return True
 

@@ -1,5 +1,6 @@
 from couchpotato import addView
 from couchpotato.core.event import fireEvent, addEvent
+from couchpotato.core.helpers.encoding import tryUrlencode
 from couchpotato.core.helpers.variable import getExt
 from couchpotato.core.logger import CPLog
 from couchpotato.environment import Env
@@ -11,10 +12,8 @@ import glob
 import math
 import os.path
 import re
-import socket
 import time
 import traceback
-import urllib
 import urllib2
 
 log = CPLog(__name__)
@@ -114,7 +113,6 @@ class Plugin(object):
                 del self.http_failed_disabled[host]
 
         self.wait(host)
-
         try:
 
             if multipart:
@@ -127,10 +125,12 @@ class Plugin(object):
                 data = opener.open(request, timeout = timeout).read()
             else:
                 log.info('Opening url: %s, params: %s' % (url, [x for x in params.iterkeys()]))
-                data = urllib.urlencode(params) if len(params) > 0 else None
+                data = tryUrlencode(params) if len(params) > 0 else None
                 request = urllib2.Request(url, data, headers)
 
                 data = urllib2.urlopen(request, timeout = timeout).read()
+
+            self.http_failed_request[host] = 0
         except IOError:
             if show_error:
                 log.error('Failed opening url in %s: %s %s' % (self.getName(), url, traceback.format_exc(1)))
@@ -198,7 +198,7 @@ class Plugin(object):
                 log.error("Something went wrong when finishing the plugin function. Could not find the 'is_running' key")
 
 
-    def getCache(self, cache_key, url = None, timeout = 300):
+    def getCache(self, cache_key, url = None, timeout = 300, url_timeout = 10):
         cache = Env.get('cache').get(cache_key)
         if cache:
             if not Env.get('dev'): log.debug('Getting cache %s' % cache_key)
@@ -206,7 +206,7 @@ class Plugin(object):
 
         if url:
             try:
-                data = self.urlopen(url)
+                data = self.urlopen(url, timeout = url_timeout)
                 self.setCache(cache_key, data, timeout = timeout)
                 return data
             except:

@@ -6,34 +6,37 @@ from httplib import HTTPSConnection
 log = CPLog(__name__)
 
 
-class Prowl(Notification):
+class Pushover(Notification):
+
+    app_token = 'YkxHMYDZp285L265L3IwH3LmzkTaCy'
 
     def notify(self, message = '', data = {}):
         if self.isDisabled(): return
 
-        http_handler = HTTPSConnection('api.prowlapp.com')
+        http_handler = HTTPSConnection("api.pushover.net:443")
 
         data = {
-            'apikey': self.conf('api_key'),
-            'application': self.default_title,
-            'description': toUnicode(message),
-            'priority': self.conf('priority'),
+            'user': self.conf('user_key'),
+            'token': self.app_token,
+            'message': toUnicode(message),
+            'priority': self.conf('priority')
         }
 
         http_handler.request('POST',
-            '/publicapi/add',
+            "/1/messages.json",
             headers = {'Content-type': 'application/x-www-form-urlencoded'},
             body = tryUrlencode(data)
         )
+
         response = http_handler.getresponse()
         request_status = response.status
 
         if request_status == 200:
-            log.info('Prowl notifications sent.')
+            log.info('Pushover notifications sent.')
             return True
         elif request_status == 401:
-            log.error('Prowl auth failed: %s' % response.reason)
+            log.error('Pushover auth failed: %s' % response.reason)
             return False
         else:
-            log.error('Prowl notification failed.')
+            log.error('Pushover notification failed.')
             return False

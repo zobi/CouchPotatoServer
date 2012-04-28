@@ -1,10 +1,8 @@
-from couchpotato import get_session
 from couchpotato.api import addApiView
 from couchpotato.core.event import fireEvent, addEvent, fireEventAsync
 from couchpotato.core.helpers.request import jsonified, getParams
 from couchpotato.core.logger import CPLog
 from couchpotato.core.plugins.base import Plugin
-from couchpotato.core.settings.model import File
 from couchpotato.environment import Env
 import os
 import time
@@ -41,7 +39,7 @@ class Manage(Plugin):
 
 
     def updateLibrary(self, full = True):
-        last_update = float(Env.prop('manage.last_update'))
+        last_update = float(Env.prop('manage.last_update', default = 0))
 
         if self.isDisabled() or (last_update > time.time() - 20):
             return
@@ -58,7 +56,8 @@ class Manage(Plugin):
 
             log.info('Updating manage library: %s' % directory)
             identifiers = fireEvent('scanner.folder', folder = directory, newer_than = last_update, single = True)
-            added_identifiers.extend(identifiers)
+            if identifiers:
+                added_identifiers.extend(identifiers)
 
             # Break if CP wants to shut down
             if self.shuttingDown():
@@ -78,6 +77,6 @@ class Manage(Plugin):
 
     def directories(self):
         try:
-            return self.conf('library', default = '').split('::')
+            return [x.strip() for x in self.conf('library', default = '').split('::')]
         except:
             return []

@@ -1,10 +1,10 @@
 from couchpotato.core.event import fireEvent
+from couchpotato.core.helpers.encoding import tryUrlencode
 from couchpotato.core.helpers.rss import RSS
 from couchpotato.core.helpers.variable import cleanHost
 from couchpotato.core.logger import CPLog
 from couchpotato.core.providers.nzb.base import NZBProvider
 from dateutil.parser import parse
-from urllib import urlencode
 import time
 import xml.etree.ElementTree as XMLTree
 
@@ -48,7 +48,7 @@ class Newznab(NZBProvider, RSS):
         if self.isDisabled(host) or not self.isAvailable(self.getUrl(host['host'], self.urls['search'])):
             return results
 
-        arguments = urlencode({
+        arguments = tryUrlencode({
             't': self.cat_backup_id,
             'r': host['api_key'],
             'i': 58,
@@ -81,7 +81,7 @@ class Newznab(NZBProvider, RSS):
             return results
 
         cat_id = self.getCatId(quality['identifier'])
-        arguments = urlencode({
+        arguments = tryUrlencode({
             'imdbid': movie['library']['identifier'].replace('tt', ''),
             'cat': cat_id[0],
             'apikey': host['api_key'],
@@ -157,9 +157,9 @@ class Newznab(NZBProvider, RSS):
 
     def getHosts(self):
 
-        uses = str(self.conf('use')).split(',')
-        hosts = self.conf('host').split(',')
-        api_keys = self.conf('api_key').split(',')
+        uses = [x.strip() for x in str(self.conf('use')).split(',')]
+        hosts = [x.strip() for x in self.conf('host').split(',')]
+        api_keys = [x.strip() for x in self.conf('api_key').split(',')]
 
         list = []
         for nr in range(len(hosts)):
