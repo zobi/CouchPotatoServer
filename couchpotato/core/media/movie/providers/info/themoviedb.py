@@ -1,4 +1,4 @@
-import traceback
+﻿import traceback
 
 from couchpotato.core.event import addEvent, fireEvent
 from couchpotato.core.helpers.encoding import toUnicode, ss, tryUrlencode
@@ -149,7 +149,8 @@ class TheMovieDb(MovieProvider):
             'plot': movie.get('overview'),
             'genres': genres,
             'collection': getattr(movie.get('belongs_to_collection'), 'name', None),
-            'actor_roles': actors
+            'actor_roles': actors,
+            'languages' : fillingLanguages(splitString(movie.get('original_language')))
         }
 
         movie_data = dict((k, v) for k, v in movie_data.items() if v)

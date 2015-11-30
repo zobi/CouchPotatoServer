@@ -1,4 +1,4 @@
-import json
+﻿import json
 import re
 import traceback
 
@@ -115,6 +115,7 @@ class OMDBAPI(MovieProvider):
                 'directors': splitString(movie.get('Director', '')),
                 'writers': splitString(movie.get('Writer', '')),
                 'actors': splitString(movie.get('Actors', '')),
+                'languages' : fillingLanguages(splitString(movie.get('Language', '')))
             }
             movie_data = dict((k, v) for k, v in movie_data.items() if v)
         except:
