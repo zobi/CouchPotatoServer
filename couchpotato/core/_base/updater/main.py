@@ -1,4 +1,4 @@
-import json
+﻿import json
 import os
 import shutil
 import tarfile
@@ -155,7 +155,7 @@ class Updater(Plugin):
 
 class BaseUpdater(Plugin):
 
-    repo_user = 'sarakha63'
+    repo_user = 'cyberden'
     repo_name = 'CouchPotatoServer'
     branch = version.BRANCH
 
