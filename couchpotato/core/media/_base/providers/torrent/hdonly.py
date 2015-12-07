@@ -1,4 +1,4 @@
-import htmlentitydefs
+﻿import htmlentitydefs
 import json
 import re
 import unicodedata
@@ -93,8 +93,9 @@ config = [{
             'tab': 'searcher',
             'list': 'torrent_providers',
             'name': 'hdonly',
-            'description': '<a href="https://hd-only.org">HD-Only.me</a>',
+            'description': '<a href="https://hd-only.org">HD-Only.org</a>',
             'wizard': True,
+            'icon': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAACf0lEQVR4nLXSz07TYAAA8O9bW9Ztbcfc2EZEHVu3GDc6wGgwgoGTXow3jUaDIgcv+AK+g/Hgn4MX7ibuICpiUBKBAeLI5sZIgEEGhnXZGPvabmv7dfUZPPh7hh8A/xuM9cVvTz69OTY0s7ByffjScjofDvRUTyQDQF8nk98/HImf/7S4fmt06P3XxcT0a3hvfDISCWd/Z4W4kMvmQnxILIkOxgEAkGXF7/ft7OzGYtF0OiMIfbncJnz55m2xuO/xeI6rx16fFyHJ5/MqsmICwDCMKJY4jhPFstvtrlQq/m4fea6nm6Ygx3V63S6Oc2KsuzpdRtsAAHZ0UG4XRxKEy8k67PZTTtbp5MjP899binLudPfW9q6NYWkrrek6be2gafrh/bv1Ono13y8eAQBIA3J3Yi9gIpFASG62WrWTWqg3QFiI2S9z5bL4eOKRjvHct2Sq/qyn8WSgPzqzPdXltZMLP5YMjNumCQEsiWWMcWFvLz4w+OHjrNFurteeAwIPXbm8urbGMvsHB2eJIB+pVKuB3kAqldIxVlXNztjVltpQW5retjbe1eCNenFaEC78LI6SUCHCPE+R1MHhH4qiQLttGgbWsa5puqrmN3NXh0eOtcEjdWyrfBFjcEabgg/GJ5qNBklRBjZomxVCC8sypgkAMCGEkiSZptlqtkwAgGmSFGlhHA6E6nabDaET2kpLCEFgkWVJlhUIIEKS1UrXEeJYpo4Qy7CEJDdCIT6ZXA6HI6urKx5PV35rU9V0SUK7hT2OY3+lNvhQcCm5Eg7zy8kkHL42upHOxIX+TCYdjcYKhR2v168oMgCAcThK5XIoGMzmcnFBSGfSA3Hhn7f+Ba/6N2aE1SAhAAAAAElFTkSuQmCC',
             'options': [
                 {
                     'name': 'enabled',
