@@ -198,6 +198,9 @@
     <Compile Include="couchpotato\core\media\movie\providers\torrent\hd4free.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\hdaccess.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\hdbits.py" />
+    <Compile Include="couchpotato\core\media\movie\providers\torrent\hdonly.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="couchpotato\core\media\movie\providers\torrent\hdtorrents.py">
       <SubType>Code</SubType>
     </Compile>
@@ -767,6 +770,9 @@
     <Compile Include="couchpotato\core\media\_base\providers\torrent\hd4free.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\hdaccess.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\hdbits.py" />
+    <Compile Include="couchpotato\core\media\_base\providers\torrent\hdonly.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="couchpotato\core\media\_base\providers\torrent\hdtorrents.py">
       <SubType>Code</SubType>
     </Compile>
