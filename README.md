@@ -38,16 +38,17 @@ Linux:
 * (Fedora / CentOS) Install [GIT](http://git-scm.com/) with `yum install git`
 * Install [LXML](http://lxml.de/installation.html) for better/faster website scraping 
 * 'cd' to the folder of your choosing.
+* Install [PyOpenSSL](https://pypi.python.org/pypi/pyOpenSSL) with `pip install --upgrade pyopenssl`
 * Run `git clone https://github.com/RuudBurger/CouchPotatoServer.git`
 * Then do `python CouchPotatoServer/CouchPotato.py` to start
-* (Ubuntu / Debian) To run on boot copy the init script `sudo cp CouchPotatoServer/init/ubuntu /etc/init.d/couchpotato`
-* (Ubuntu / Debian) Copy the default paths file `sudo cp CouchPotatoServer/init/ubuntu.default /etc/default/couchpotato`
-* (Ubuntu / Debian) Change the paths inside the default file `sudo nano /etc/default/couchpotato`
-* (Ubuntu / Debian) Make it executable `sudo chmod +x /etc/init.d/couchpotato`
-* (Ubuntu / Debian) Add it to defaults `sudo update-rc.d couchpotato defaults`
-* (systemd) To run on boot copy the systemd config `sudo cp CouchPotatoServer/init/couchpotato.fedora.service /etc/systemd/system/couchpotato.service`
-* (systemd) Update the systemd config file with your user and path to CouchPotato.py 
-* (systemd) Enable it at boot with `sudo systemctl enable couchpotato`
+* (Ubuntu / Debian with upstart) To run on boot copy the init script `sudo cp CouchPotatoServer/init/ubuntu /etc/init.d/couchpotato`
+* (Ubuntu / Debian with upstart) Copy the default paths file `sudo cp CouchPotatoServer/init/ubuntu.default /etc/default/couchpotato`
+* (Ubuntu / Debian with upstart) Change the paths inside the default file `sudo nano /etc/default/couchpotato`
+* (Ubuntu / Debian with upstart) Make it executable `sudo chmod +x /etc/init.d/couchpotato`
+* (Ubuntu / Debian with upstart) Add it to defaults `sudo update-rc.d couchpotato defaults`
+* (Linux with systemd) To run on boot copy the systemd config `sudo cp CouchPotatoServer/init/couchpotato.service /etc/systemd/system/couchpotato.service`
+* (Linux with systemd) Update the systemd config file with your user and path to CouchPotato.py
+* (Linux with systemd) Enable it at boot with `sudo systemctl enable couchpotato`
 * Open your browser and go to `http://localhost:5050/`
 
 Docker:
@@ -84,4 +85,4 @@ You can now change css and javascript and it wil reload the page when needed.
 
 By default it will combine files used in the core folder. If you're adding a new .scss or .js file, you might need to add it and then restart the grunt process for it to combine it properly.
 
-Don't forget to enable development inside the CP settings. This disables some functions and also makes sure javascript rrors are pushed to console instead of the log.
+Don't forget to enable development inside the CP settings. This disables some functions and also makes sure javascript errors are pushed to console instead of the log.
