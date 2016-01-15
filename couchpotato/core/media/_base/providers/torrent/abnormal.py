@@ -32,7 +32,7 @@ class Base(TorrentProvider):
             try:
                 TitleStringReal = str(title.encode("latin-1").replace('-',' '))
             
-                url = self.urls['search'] + 'cat[]=MOVIE|DVDR&cat[]=MOVIE|DVDRIP&cat[]=MOVIE|BDRIP&cat[]=MOVIE|VOSTFR&cat[]=MOVIE|HD|720p&cat[]=MOVIE|HD|1080p&cat[]=MOVIE|REMUXBR&cat[]=MOVIE|FULLBR&' + urllib.urlencode( {'search':title.encode('utf-8') }) + '&order=Time&way=desc'
+                url = self.urls['search'] + 'cat[]=MOVIE|DVDR&cat[]=MOVIE|DVDRIP&cat[]=MOVIE|BDRIP&cat[]=MOVIE|VOSTFR&cat[]=MOVIE|HD|720p&cat[]=MOVIE|HD|1080p&cat[]=MOVIE|REMUXBR&cat[]=MOVIE|FULLBR&cat[]=ANIME&' + urllib.urlencode( {'search':title.encode('utf-8') }) + '&order=Time&way=desc'
 
                 data = self.getHTMLData(url)
         

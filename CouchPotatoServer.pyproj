@@ -185,6 +185,7 @@
     <Compile Include="couchpotato\core\media\movie\providers\nzb\nzbclub.py" />
     <Compile Include="couchpotato\core\media\movie\providers\nzb\omgwtfnzbs.py" />
     <Compile Include="couchpotato\core\media\movie\providers\nzb\__init__.py" />
+    <Compile Include="couchpotato\core\media\movie\providers\torrent\abnormal.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\addict.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\alpharatio.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\awesomehd.py" />
@@ -756,6 +757,7 @@
     <Compile Include="couchpotato\core\media\_base\providers\nzb\nzbclub.py" />
     <Compile Include="couchpotato\core\media\_base\providers\nzb\omgwtfnzbs.py" />
     <Compile Include="couchpotato\core\media\_base\providers\nzb\__init__.py" />
+    <Compile Include="couchpotato\core\media\_base\providers\torrent\abnormal.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\addict.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\alpharatio.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\awesomehd.py" />
