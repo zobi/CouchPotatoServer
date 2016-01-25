@@ -32,7 +32,7 @@ class Base(TorrentProvider):
             try:
                 TitleStringReal = str(title.encode("latin-1").replace('-',' '))
             
-                url = self.urls['search'] + 'cat[]=MOVIE|DVDR&cat[]=MOVIE|DVDRIP&cat[]=MOVIE|BDRIP&cat[]=MOVIE|VOSTFR&cat[]=MOVIE|HD|720p&cat[]=MOVIE|HD|1080p&cat[]=MOVIE|REMUXBR&cat[]=MOVIE|FULLBR&cat[]=ANIME&' + urllib.urlencode( {'search':title.encode('utf-8') }) + '&order=Time&way=desc'
+                url = self.urls['search'] + 'cat[]=MOVIE|DVDR&cat[]=MOVIE|DVDRIP&cat[]=MOVIE|BDRIP&cat[]=MOVIE|VOSTFR&cat[]=MOVIE|HD|720p&cat[]=MOVIE|HD|1080p&cat[]=MOVIE|REMUXBR&cat[]=MOVIE|FULLBR&cat[]=ANIME&' + urllib.urlencode( {'search': unicodedata.normalize('NFKD', title).encode('ASCII', 'ignore').replace('\'', ' ') }) + '&order=Time&way=desc'
 
                 data = self.getHTMLData(url)
         
@@ -44,6 +44,7 @@ class Base(TorrentProvider):
 
                       if torrentTable:
                           torrents = torrentTable.find_all('tr', class_=None)
+                          torrents += torrentTable.find_all('tr', class_='tablerow-lightgrey')
 
                           for torrentRow in torrents:
                   
