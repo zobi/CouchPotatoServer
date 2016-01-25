@@ -223,7 +223,6 @@
     <Compile Include="couchpotato\core\media\movie\providers\torrent\torrentpotato.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\torrentshack.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\torrentz.py" />
-    <Compile Include="couchpotato\core\media\movie\providers\torrent\yify.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\__init__.py" />
     <Compile Include="couchpotato\core\media\movie\providers\trailer\allocine.py" />
     <Compile Include="couchpotato\core\media\movie\providers\trailer\base.py" />
