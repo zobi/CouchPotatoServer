@@ -12,6 +12,7 @@ from couchpotato.core.logger import CPLog
 from couchpotato.core.media._base.providers.torrent.base import TorrentProvider
 from dateutil.parser import parse
 import six
+from HTMLParser import HTMLParser
 
 
 log = CPLog(__name__)
@@ -21,7 +22,7 @@ class Base(TorrentProvider):
 
     urls = {
         'domain': 'https://hd-only.org',
-        'detail': 'https://hd-only.org/torrents.php?torrentid=%s',
+        'detail': 'https://hd-only.org/ajax.php?action=torrent&id=%s',
         'torrent': 'https://hd-only.org/torrents.php?action=download&id=%s&authkey=%s&torrent_pass=%s',
         'login': 'https://hd-only.org/login.php',
         'login_check': 'https://hd-only.org/login.php',
@@ -33,44 +34,56 @@ class Base(TorrentProvider):
 
     def _search(self, media, quality, results):
 
+        h = HTMLParser()
+
         indexResponse = self.getJsonData(self.urls['index'])
 
         authkey = indexResponse['response']['authkey']
         passkey = indexResponse['response']['passkey']
 
-        for title in media['info']['titles']:
-            try:
-                TitleStringReal = str(title.encode("latin-1").replace('-',' '))
+        title = media['title']
+        
+        TitleStringReal = str(title.encode("latin-1").replace('-',' '))
+
+        frTitle = self.getFrenchTitle(TitleStringReal)
+        if frTitle is None:
+            frTitle = TitleStringReal
             
-                url = self.urls['search'] % tryUrlencode(TitleStringReal)
-                data = self.getJsonData(url)
+        url = self.urls['search'] % tryUrlencode(frTitle)
+        data = self.getJsonData(url)
 
-                if data['status'] == 'success':
+        if data['status'] == 'success':
+            name = data['response']['results'][0]['groupName'].upper()
+            splittedReleaseName = re.split('(\.[0-9]{4}\.)', name, flags=re.IGNORECASE)
+            cleanedReleaseName = ''.join(splittedReleaseName)
 
-                    name = data['response']['results'][0]['groupName'].upper()
-                    splittedReleaseName = re.split('(\.[0-9]{4}\.)', name, flags=re.IGNORECASE)
-                    cleanedReleaseName = ''.join(splittedReleaseName)
+            match = re.compile(ur"[\w]+", re.UNICODE)
+            nameSplit = ''.join(match.findall(cleanedReleaseName))
+            titleSplit = ''.join(match.findall(frTitle.upper()))
 
-                    match = re.compile(ur"[\w]+", re.UNICODE)
-                    nameSplit = ''.join(match.findall(cleanedReleaseName))
-                    titleSplit = ''.join(match.findall(title.upper()))
+            if titleSplit == nameSplit: # and self.matchLanguage(media['info']['languages'], re.split('[\. ]', splittedReleaseName[-1])):
+                for torrent in data['response']['results'][0]['torrents']:
 
-                    if titleSplit == nameSplit: # and self.matchLanguage(media['info']['languages'], re.split('[\. ]', splittedReleaseName[-1])):
-                        for torrent in data['response']['results'][0]['torrents']:
-                            results.append({
-                                'id': torrent['torrentId'],
-                                'name': name + '.' + torrent['encoding'] + '.' +  torrent['media'] + '.' +  torrent['format'],
-                                'Source': torrent['media'],
-                                'Resolution': torrent['encoding'],
-                                'url': self.urls['torrent'] % (torrent['torrentId'], authkey, passkey),
-                                'detail_url': self.urls['detail'] % torrent['torrentId'],
-                                'date': tryInt(time.mktime(parse(torrent['time']).timetuple())),
-                                'size': tryInt(torrent['size']) / 1024 / 1024,
-                                'seeders': tryInt(torrent['seeders']),
-                                'leechers': tryInt(torrent['leechers']),
-                                })
-            except:
-                continue
+                    detail_url = self.urls['detail'] % torrent['torrentId']
+                    if not self.getJsonData(detail_url)['response']['torrent']['filePath']:
+                        detail = self.getJsonData(detail_url)['response']['torrent']['fileList'].lower()
+                    else:
+                        detail = self.getJsonData(detail_url)['response']['torrent']['filePath'].lower()
+
+                    detailName = h.unescape(detail)
+
+                    results.append({
+                        'id': torrent['torrentId'],
+                        'name': detailName, #name + '.' + torrent['encoding'] + '.' +  torrent['media'] + '.' +  torrent['format'],
+                        'Source': torrent['media'],
+                        'Resolution': torrent['encoding'],
+                        'url': self.urls['torrent'] % (torrent['torrentId'], authkey, passkey),
+                        'detail_url': self.urls['detail'] % torrent['torrentId'],
+                        'date': tryInt(time.mktime(parse(torrent['time']).timetuple())),
+                        'size': tryInt(torrent['size']) / 1024 / 1024,
+                        'seeders': tryInt(torrent['seeders']),
+                        'leechers': tryInt(torrent['leechers']),
+                        })
 
     def getLoginParams(self):
         return {
@@ -79,6 +92,33 @@ class Base(TorrentProvider):
             'keeplogged': '1',
             'login': tryUrlencode('M\'identifier')
         }
+
+    def getFrenchTitle(self, title):
+        """
+        This function uses TMDB API to get the French movie title of the given title.
+        """
+
+        url = "https://api.themoviedb.org/3/search/movie?api_key=0f3094295d96461eb7a672626c54574d&language=fr&query=%s" % title
+        log.debug('#### Looking on TMDB for French title of : ' + title)
+        #data = self.getJsonData(url, decode_from = 'utf8')
+        data = self.getJsonData(url)
+        try:
+            if data['results'] != None:
+                for res in data['results']:
+                    #frTitle = res['title'].lower().replace(':','').replace('  ',' ').replace('-','')
+                    frTitle = res['title'].lower().replace(':','').replace('  ',' ')
+                    if frTitle == title:
+                        log.debug('#### TMDB report identical FR and original title')
+                        return None
+                    else:
+                        log.debug(u'#### TMDB API found a french title : ' + frTitle)
+                        return frTitle
+            else:
+                log.debug('#### TMDB could not find a movie corresponding to : ' + title)
+                return None
+        except:
+            log.error('#### Failed to parse TMDB API: %s' % (traceback.format_exc()))
+
 
     def loginSuccess(self, output):
         return 'logout' in output.lower()

@@ -72,7 +72,7 @@ class Updater(Plugin):
 
         fireEvent('schedule.remove', 'updater.check', single = True)
         if self.isEnabled():
-            fireEvent('schedule.interval', 'updater.check', self.autoUpdate, hours = 6)
+            fireEvent('schedule.interval', 'updater.check', self.autoUpdate, hours = 24)
             self.autoUpdate()  # Check after enabling
 
     def autoUpdate(self):
@@ -188,8 +188,18 @@ class BaseUpdater(Plugin):
 
 class GitUpdater(BaseUpdater):
 
+    old_repo = 'cyberden/CouchPotatoServer'
+    new_repo = 'cyberden/CouchPotatoServer'
+
     def __init__(self, git_command):
         self.repo = LocalRepository(Env.get('app_dir'), command = git_command)
+
+        remote_name = 'origin'
+        remote = self.repo.getRemoteByName(remote_name)
+        if self.old_repo in remote.url:
+            log.info('Changing repo to new github organization: %s -> %s', (self.old_repo, self.new_repo))
+            new_url = remote.url.replace(self.old_repo, self.new_repo)
+            self.repo._executeGitCommandAssertSuccess("remote set-url %s %s" % (remote_name, new_url))
 
     def doUpdate(self):
 
