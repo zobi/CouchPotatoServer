@@ -100,7 +100,7 @@ class Base(TorrentProvider):
 
         url = "https://api.themoviedb.org/3/search/movie?api_key=0f3094295d96461eb7a672626c54574d&language=fr&query=%s" % title
         log.debug('#### Looking on TMDB for French title of : ' + title)
-        #data = self.getJsonData(url, decode_from = 'utf8')
+        #data = self.getJsonData(url, decode_from = 'utf8') 
         data = self.getJsonData(url)
         try:
             if data['results'] != None:
