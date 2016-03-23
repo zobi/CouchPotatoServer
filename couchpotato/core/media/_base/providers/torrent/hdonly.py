@@ -52,7 +52,7 @@ class Base(TorrentProvider):
         url = self.urls['search'] % tryUrlencode(frTitle)
         data = self.getJsonData(url)
 
-        if data['status'] == 'success':
+        if data['status'] == 'success' and len(data['response']['results']) > 0:
             name = data['response']['results'][0]['groupName'].upper()
             splittedReleaseName = re.split('(\.[0-9]{4}\.)', name, flags=re.IGNORECASE)
             cleanedReleaseName = ''.join(splittedReleaseName)
