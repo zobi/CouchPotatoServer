@@ -228,7 +228,7 @@ config = [{
             'options': [
                 {
                     'name': 'api_key',
-                    'default': '9b939aee0aaafc12a65bf448e4af9543',
+                    'default': '20abe07786b822b5e27c5051fc127911',
                     'label': 'Api Key',
                 },
             ],
