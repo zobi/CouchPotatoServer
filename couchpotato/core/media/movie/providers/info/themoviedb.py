@@ -223,7 +223,7 @@ config = [{
             'tab': 'providers',
             'name': 'tmdb',
             'label': 'TheMovieDB',
-            'hidden': True,
+            'hidden': False,
             'description': 'Used for all calls to TheMovieDB.',
             'options': [
                 {
