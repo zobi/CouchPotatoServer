@@ -23,6 +23,7 @@ class Base(TorrentProvider):
     urls = {
         'domain': 'https://hd-only.org',
         'detail': 'https://hd-only.org/ajax.php?action=torrent&id=%s',
+        'detailLink': 'https://hd-only.org/torrents.php?id=%s&torrentid=%s',
         'torrent': 'https://hd-only.org/torrents.php?action=download&id=%s&authkey=%s&torrent_pass=%s',
         'login': 'https://hd-only.org/login.php',
         'login_check': 'https://hd-only.org/login.php',
@@ -53,6 +54,7 @@ class Base(TorrentProvider):
         data = self.getJsonData(url)
 
         if data['status'] == 'success' and len(data['response']['results']) > 0:
+            groupId = data[u'response'][u'results'][0][u'groupId']
             name = data['response']['results'][0]['groupName'].upper()
             splittedReleaseName = re.split('(\.[0-9]{4}\.)', name, flags=re.IGNORECASE)
             cleanedReleaseName = ''.join(splittedReleaseName)
@@ -78,7 +80,7 @@ class Base(TorrentProvider):
                         'Source': torrent['media'],
                         'Resolution': torrent['encoding'],
                         'url': self.urls['torrent'] % (torrent['torrentId'], authkey, passkey),
-                        'detail_url': self.urls['detail'] % torrent['torrentId'],
+                        'detail_url': self.urls['detailLink'] % (groupId, torrent['torrentId']),
                         'date': tryInt(time.mktime(parse(torrent['time']).timetuple())),
                         'size': tryInt(torrent['size']) / 1024 / 1024,
                         'seeders': tryInt(torrent['seeders']),
