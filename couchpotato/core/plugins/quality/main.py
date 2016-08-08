@@ -1,4 +1,4 @@
-from math import fabs, ceil
+﻿from math import fabs, ceil
 import traceback
 import re
 
@@ -511,7 +511,7 @@ class QualityPlugin(Plugin):
             'Movie.Name.2014.720p.BluRay.x264-ReleaseGroup': {'size': 10300, 'quality': '720p'},
             'Movie.Name.2014.720.Bluray.x264.DTS-ReleaseGroup': {'size': 9700, 'quality': '720p'},
             'Movie Name 2015 2160p SourceSite WEBRip DD5 1 x264-ReleaseGroup': {'size': 21800, 'quality': '2160p'},
-            'Movie Name 2012 2160p WEB-DL FLAC 5 1 x264-ReleaseGroup': {'size': 59650, 'quality': '2160p'}
+            'Movie.Name.2015.FRENCH.1080p.WebHD.H264-SiGeRiS.mkv' : {'size': 3060, 'quality': 'brrip'}
         }
 
         correct = 0
