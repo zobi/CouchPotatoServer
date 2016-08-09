@@ -25,7 +25,7 @@ class DownloaderBase(Provider):
     status_support = True
 
     torrent_sources = [
-        'https://itorrents.net/torrent/%s.torrent',
+        'https://itorrents.org/torrent/%s.torrent',
     ]
 
     torrent_trackers = [
