@@ -35,7 +35,7 @@ class Base(NZBProvider):
             threeD= True
         else:
             threeD=False
-        if moviequality in ("720p","1080p","bd50"):
+        if moviequality in ("720p","1080p","bd50","2160p"):
             cat1='39'
             cat2='49'
             minSize = 2000
@@ -55,7 +55,7 @@ class Base(NZBProvider):
                 continue
             if threeD:
                 TitleStringReal = TitleStringReal + ' 3d'
-            data = 'chkInit=1&edTitre='+TitleStringReal+'&chkTitre=on&chkFichier=on&chkCat=on&cats%5B%5D='+cat1+'&cats%5B%5D='+cat2+'&edAge=&edYear='
+            data = 'chkInit=1&edTitre='+simplifyString(unicode(TitleStringReal,"latin-1"))+'&chkTitre=on&chkFichier=on&chkCat=on&cats%5B%5D='+cat1+'&cats%5B%5D='+cat2+'&edAge=&edYear='
             try:
                 soup = BeautifulSoup( urllib2.urlopen(self.urls['search'], data) )
             except Exception, e:
@@ -204,6 +204,12 @@ class Base(NZBProvider):
                             newsgroup = "alt.binaries.nl"
                         elif newsgroup == "abx":
                             newsgroup = "alt.binaries.x"
+                        elif newsgroup == "ab.new-movies":
+                            newsgroup = "alt.binaries.new-movies"
+                        elif newsgroup == "ab.triballs":
+                            newsgroup = "alt.binaries.triballs"
+                        elif newsgroup == "abdivxf":
+                            newsgroup = "alt.binaries.divx.french"
                         else:
                             log.error(u"Unknown binnewz newsgroup: " + newsgroup)
                             continue
@@ -254,6 +260,8 @@ class Base(NZBProvider):
                     if qualityStr=="":
                         if source in ("Blu Ray-Rip", "HD DVD-Rip"):
                             qualityStr="brrip"
+                        elif source =="Blu Ray-Rip 4K":
+                            qualityStr="2160p"
                         elif source =="DVDRip":
                             qualityStr="dvdrip"
                         elif source == "TS":
@@ -281,7 +289,7 @@ class Base(NZBProvider):
                                     def extra_check(item):
                                         return True
                                     qualitytag=''
-                                    if qualityStr.lower() in ['720p','1080p']:
+                                    if qualityStr.lower() in ['720p','1080p','2160p']:
                                         qualitytag=' hd x264 h264 '
                                     elif qualityStr.lower() in ['dvdrip']:
                                         qualitytag=' dvd xvid '
