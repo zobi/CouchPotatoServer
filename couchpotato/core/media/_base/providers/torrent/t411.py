@@ -18,9 +18,9 @@ log = CPLog(__name__)
 class Base(TorrentProvider):
 
     urls = {
-        'test': 'http://www.t411.ch/',
-        'detail': 'http://www.t411.ch/torrents/?id=%s',
-        'search': 'http://www.t411.ch/torrents/search/?',
+        'test': 'https://www.t411.ch/',
+        'detail': 'https://www.t411.ch/torrents/?id=%s',
+        'search': 'https://www.t411.ch/torrents/search/?',
     }
 
     http_time_between_calls = 1 #seconds
@@ -59,6 +59,8 @@ class Base(TorrentProvider):
             qualpar="&term%5B17%5D%5B%5D=541&term%5B17%5D%5B%5D=542&term%5B17%5D%5B%5D=719&term%5B17%5D%5B%5D=1160&term%5B17%5D%5B%5D=722&term%5B7%5D%5B%5D=13&term%5B7%5D%5B%5D=14"
         elif moviequality in ['br-disk']:
             qualpar="&term%5B17%5D%5B%5D=541&term%5B17%5D%5B%5D=542&term%5B17%5D%5B%5D=719&term%5B17%5D%5B%5D=1160&term%5B17%5D%5B%5D=722&term%5B7%5D%5B%5D=1171&term%5B7%5D%5B%5D=17"
+        elif moviequality in ['2160p']:
+            qualpar="&term%5B17%5D%5B%5D=541&term%5B17%5D%5B%5D=722&term%5B17%5D%5B%5D=542&term%5B17%5D%5B%5D=1160&term%5B17%5D%5B%5D=719&term%5B7%5D%5B%5D=1219&term%5B7%5D%5B%5D=1235&term%5B7%5D%5B%5D=1182"
         else:
             qualpar="&term%5B17%5D%5B%5D=541&term%5B17%5D%5B%5D=542&term%5B17%5D%5B%5D=719&term%5B17%5D%5B%5D=1160&term%5B17%5D%5B%5D=722&term%5B7%5D%5B%5D=8&term%5B7%5D%5B%5D=9&term%5B7%5D%5B%5D=10&term%5B7%5D%5B%5D=11&term%5B7%5D%5B%5D=18&term%5B7%5D%5B%5D=19"
         if quality['custom']['3d']==1:
@@ -120,8 +122,8 @@ class Base(TorrentProvider):
                                 testname=namer_check.correctName(name,movie)
                                 if testname==0:
                                     continue
-                                url = ('http://www.t411.ch/torrents/download/?id=%s' % idt)
-                                detail_url = ('http://www.t411.ch/torrents/?id=%s' % idt)
+                                url = ('https://www.t411.ch/torrents/download/?id=%s' % idt)
+                                detail_url = ('https://www.t411.ch/torrents/?id=%s' % idt)
                                 leecher = result.findAll('td')[8].text
                                 size = result.findAll('td')[5].text
                                 age = result.findAll('td')[4].text
@@ -185,7 +187,7 @@ class Base(TorrentProvider):
         ]
 
         try:
-            response = self.opener.open('http://www.t411.ch/users/login/', self.getLoginParams())
+            response = self.opener.open('https://www.t411.ch/users/login/', self.getLoginParams())
         except urllib2.URLError as e:
             log.error('Login to T411 failed: %s' % e)
             return False
