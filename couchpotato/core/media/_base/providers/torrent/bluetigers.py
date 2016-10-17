@@ -97,7 +97,7 @@ class Base(TorrentProvider):
     def getLoginParams(self):
         return {
             'username': self.conf('username'),
-            'password': 'Namibiebt!',#'self.conf('password'),
+            'password': self.conf('password'),
             'take_login': '1',
         }
 
