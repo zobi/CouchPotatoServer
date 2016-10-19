@@ -248,7 +248,7 @@ class Searcher(SearcherBase):
             if 'FRENCH' in upper_rel_words or 'TRUEFRENCH' in upper_rel_words or 'MULTI' in upper_rel_words:
                 return True;
 
-            if languageWordFound == false and 'FRENCH' in releaseMetaDatas:
+            if languageWordFound == False and 'FRENCH' in releaseMetaDatas:
                 return True;
         else:
             if any(l for l in upper_rel_words if l.upper() in releaseMetaDatas) or 'MULTI' in upper_rel_words:
