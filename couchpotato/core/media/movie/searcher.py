@@ -270,6 +270,11 @@ class MovieSearcher(SearcherBase, MovieTypeBase):
             log.info2('Wrong: Outside retention, age is %s, needs %s or lower: %s', (nzb['age'], retention, nzb['name']))
             return False
 
+        # Check for Original Version flag
+        if not fireEvent('searcher.correct_language', nzb['name'], media, single = True):
+            log.info2('Wrong: requested language configuration not found')
+            return False
+
         # Check for required and ignored words
         if not fireEvent('searcher.correct_words', nzb['name'], media, single = True):
             return False

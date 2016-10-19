@@ -274,8 +274,8 @@ def possibleTitles(raw_title):
 def randomString(size = 8, chars = string.ascii_uppercase + string.digits):
     return ''.join(random.choice(chars) for x in range(size))
 
-def fillingLanguages(languages):
-    allLanguages = [
+def getAllLanguages():
+    return [
         ('aa', 'Afar'),
         ('ab', 'Abkhazian'),
         ('af', 'Afrikaans'),
@@ -330,7 +330,7 @@ def fillingLanguages(languages):
         ('fj', 'Fijian'),
         ('fi', 'Finnish'),
         ('fr', 'French'),
-        ('fr', 'French'),
+        ('fr', 'Truefrench'),
         ('fy', 'Western Frisian'),
         ('ff', 'Fulah'),
         ('Ga', 'Georgian'),
@@ -426,7 +426,6 @@ def fillingLanguages(languages):
         ('qu', 'Quechua'),
         ('rm', 'Romansh'),
         ('ro', 'Romanian; Moldavian; Moldovan'),
-        ('ro', 'Romanian; Moldavian; Moldovan'),
         ('rn', 'Rundi'),
         ('ru', 'Russian'),
         ('sg', 'Sango'),
@@ -480,6 +479,9 @@ def fillingLanguages(languages):
         ('za', 'Zhuang; Chuang'),
         ('zh', 'Chinese'),
         ('zu', 'Zulu')]
+
+def fillingLanguages(languages):
+    allLanguages = getAllLanguages()
 
     languagesToAppend = []
 

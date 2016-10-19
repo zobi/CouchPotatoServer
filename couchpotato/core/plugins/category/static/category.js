@@ -174,7 +174,8 @@ var Category = new Class({
 
 		self.el.addEvents({
 			'change:relay(select)': self.save.bind(self, 0),
-			'keyup:relay(input[type=text])': self.save.bind(self, [300])
+			'keyup:relay(input[type=text])': self.save.bind(self, [300]),
+			"change:relay(input[type=checkbox])": self.save.bind(self, 0)
 		});
 
 	},
@@ -222,7 +223,14 @@ var Category = new Class({
 					'value': data.ignored,
 					'placeholder': 'Example: dubbed, swesub, french'
 				})
-			)
+            ),
+            new Element('.category_dubbed_version.ctrlHolder').adopt(
+				new Element('label', { 'text': 'Dubbed version' }),
+				new Element('input', {
+				    'type': 'checkbox',
+				    'checked': data.ignored
+				})
+            )
 		);
 
 		self.makeSortable();
@@ -260,7 +268,8 @@ var Category = new Class({
 			'label' : self.el.getElement('.category_label input').get('value'),
 			'required' : self.el.getElement('.category_required input').get('value'),
 			'preferred' : self.el.getElement('.category_preferred input').get('value'),
-			'ignored' : self.el.getElement('.category_ignored input').get('value'),
+			'ignored': self.el.getElement('.category_ignored input').get('value'),
+			'dubbed_version': self.el.getElement(".category_dubbed_version input").get("checked"),
 			'destination': self.data.destination
 		};
 	},

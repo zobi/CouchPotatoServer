@@ -51,6 +51,13 @@ config = [{
                     'default': 'german, dutch, french, truefrench, danish, swedish, spanish, italian, korean, dubbed, swesub, korsub, dksubs, vain, HC',
                     'description': 'Ignores releases that match any of these sets. (Works like explained above)'
                 },
+                {
+                    'name': 'dubbed_version',
+                    'label': 'Dubbed Version',
+                    'type': 'bool',
+                    'default': False,
+                    'description': 'Requests that the releases are with a french audio track (dubbed for international movies)'
+                },
             ],
         },
     ],

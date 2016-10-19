@@ -4,7 +4,7 @@ import re
 from couchpotato.api import addApiView
 from couchpotato.core.event import addEvent, fireEvent
 from couchpotato.core.helpers.encoding import simplifyString
-from couchpotato.core.helpers.variable import splitString, removeEmpty, removeDuplicate
+from couchpotato.core.helpers.variable import splitString, removeEmpty, removeDuplicate, getAllLanguages
 from couchpotato.core.logger import CPLog
 from couchpotato.core.media._base.searcher.base import SearcherBase
 
@@ -22,6 +22,7 @@ class Searcher(SearcherBase):
         addEvent('searcher.correct_year', self.correctYear)
         addEvent('searcher.correct_name', self.correctName)
         addEvent('searcher.correct_words', self.correctWords)
+        addEvent('searcher.correct_language', self.correctLanguage)
         addEvent('searcher.search', self.search)
 
         addApiView('searcher.full_search', self.searchAllView, docs = {
@@ -222,6 +223,41 @@ class Searcher(SearcherBase):
             return False
 
         return True
+
+    def correctLanguage(self, rel_name, media):
+        # retrieving the base configuration
+        dubbedVersion = self.conf('dubbed_version', section = 'searcher')
+
+        # retrieving the category configuration
+        try: dubbedVersion = media['category']['dubbed_version']
+        except: pass
+
+        releaseMetaDatas = media['info']['languages']
+
+        rel_name = simplifyString(rel_name)
+        rel_words = re.split('\W+', rel_name)
+        upper_rel_words = [x.upper() for x in rel_words]
+
+        languageWordFound = False;
+        for word in upper_rel_words:
+            matchingTuples = [item for item in getAllLanguages() if item[1].upper() == word]
+            if matchingTuples and any(matchingTuples):
+                languageWordFound = True;
+
+        if dubbedVersion:
+            if 'FRENCH' in upper_rel_words or 'TRUEFRENCH' in upper_rel_words or 'MULTI' in upper_rel_words:
+                return True;
+
+            if languageWordFound == false and 'FRENCH' in releaseMetaDatas:
+                return True;
+        else:
+            if any(l for l in upper_rel_words if l.upper() in releaseMetaDatas) or 'MULTI' in upper_rel_words:
+                    return True;
+
+            if languageWordFound == False:
+                return True;
+
+        return False
 
 class SearchSetupError(Exception):
     pass

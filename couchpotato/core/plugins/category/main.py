@@ -59,6 +59,7 @@ class CategoryPlugin(Plugin):
                 'ignored': toUnicode(kwargs.get('ignored', '')),
                 'preferred': toUnicode(kwargs.get('preferred', '')),
                 'required': toUnicode(kwargs.get('required', '')),
+                'dubbed_version': kwargs.get('dubbed_version', False),
                 'destination': toUnicode(kwargs.get('destination', '')),
             }
 

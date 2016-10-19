@@ -65,7 +65,7 @@ class Base(TorrentProvider):
                                   nameSplit = ''.join(match.findall(unicodedata.normalize('NFKD', cleanedReleaseName).encode('ASCII','ignore')))
                                   titleSplit = ''.join(match.findall(unicodedata.normalize('NFKD', title.upper()).encode('ASCII','ignore')))
 
-                                  if titleSplit == nameSplit and self.matchLanguage(media['info']['languages'], re.split('[\. ]', splittedReleaseName[-1])):
+                                  if titleSplit == nameSplit:
                                       downloadUrl = downloadCell.find('a')['href']
                                       parsed = urlparse.urlparse(downloadUrl)
                                       torrent_id = urlparse.parse_qs(parsed.query)['id']
@@ -84,15 +84,6 @@ class Base(TorrentProvider):
                       log.error('Failed getting results from %s: %s', (self.getName(), traceback.format_exc()))
             except:
                 continue
-    
-    def matchLanguage(self, languages, releaseMetaDatas):
-        if self.conf('vo_only'):
-            if any(l for l in languages if l.upper() in releaseMetaDatas) or 'MULTI' in releaseMetaDatas:
-                return True
-            else:
-                return False
-
-        return True 
    
     def getLoginParams(self):
         return {
@@ -153,14 +144,6 @@ config = [{
                     'type': 'int',
                     'default': 20,
                     'description': 'Starting score for each release found via this provider.',
-                },
-                {
-                    'name': 'vo_only',
-                    'advanced': True,
-                    'label': 'Original language only',
-                    'type': 'bool',
-                    'default': False,
-                    'description': 'Only download releases with the original language of the movie'
                 }
             ],
         },
