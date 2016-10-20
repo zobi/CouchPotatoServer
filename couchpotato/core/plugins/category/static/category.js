@@ -228,7 +228,7 @@ var Category = new Class({
 				new Element('label', { 'text': 'Dubbed version' }),
 				new Element('input', {
 				    'type': 'checkbox',
-				    'checked': data.ignored
+				    'checked': data.dubbed_version
 				})
             )
 		);
