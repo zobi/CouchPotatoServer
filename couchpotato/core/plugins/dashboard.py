@@ -60,7 +60,7 @@ class Dashboard(Plugin):
 
             for media_id in active_ids:
                 try:
-                    media = db.get('id', media_id)
+                    media = fireEvent('media.get', media_id, single = True)
                 except RecordDeleted:
                     log.debug('Record already deleted: %s', media_id)
                     continue
