@@ -54,7 +54,8 @@ class TheMovieDb(MovieProvider):
             languages.remove('en')
         
         # default language has a special management
-        languages.remove(self.default_language)
+        if self.default_language in languages:
+            languages.remove(self.default_language)
         
         self.languages = languages
 			

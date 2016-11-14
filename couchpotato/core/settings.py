@@ -415,6 +415,9 @@ class Settings(object):
 
         db = get_db()
         prop = None
+
+        identifier = identifier.encode("ascii","ignore") # if identifier is not ascii it crashes below in the db access
+
         try:
             propert = db.get('property', identifier, with_doc = True)
             prop = propert['doc']['value']
