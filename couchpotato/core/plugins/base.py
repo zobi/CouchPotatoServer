@@ -171,6 +171,9 @@ class Plugin(object):
         headers['Connection'] = headers.get('Connection', 'keep-alive')
         headers['Cache-Control'] = headers.get('Cache-Control', 'max-age=0')
 
+        if headers.get('Authorization', '') != '':
+            headers['Authorization'] = headers.get('Authorization', '')
+
         use_proxy = Env.setting('use_proxy')
         proxy_url = None
 

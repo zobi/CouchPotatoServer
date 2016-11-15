@@ -1,17 +1,12 @@
-from bs4 import BeautifulSoup
 from couchpotato.core.helpers.variable import tryInt
 from couchpotato.core.logger import CPLog
 from couchpotato.core.helpers.encoding import simplifyString, tryUrlencode
 from couchpotato.core.media._base.providers.torrent.base import TorrentProvider
 from couchpotato.core.helpers import namer_check
-import cookielib
+import json
 import re
-import traceback
-import urllib2
-import urllib
-from StringIO import StringIO
-import gzip
-import time
+import unicodedata
+
 log = CPLog(__name__)
 
 
@@ -19,215 +14,87 @@ class Base(TorrentProvider):
 
     urls = {
         'test': 'https://www.t411.ch/',
+        'torrent': 'https://www.t411.ch/torrents/%s',
+        'login': 'https://api.t411.ch/auth',
         'detail': 'https://www.t411.ch/torrents/?id=%s',
-        'search': 'https://www.t411.ch/torrents/search/?',
+        'search': 'https://api.t411.ch/torrents/search/%s',
+        'download': 'https://api.t411.ch/torrents/download/%s',
     }
 
     http_time_between_calls = 1 #seconds
-    cat_backup_id = None
-    cj = cookielib.CookieJar()
-    opener = urllib2.build_opener(urllib2.HTTPCookieProcessor(cj))
-
-    class NotLoggedInHTTPError(urllib2.HTTPError):
-        def __init__(self, url, code, msg, headers, fp):
-            urllib2.HTTPError.__init__(self, url, code, msg, headers, fp)
-
-    class PTPHTTPRedirectHandler(urllib2.HTTPRedirectHandler):
-        def http_error_302(self, req, fp, code, msg, headers):
-            log.debug("302 detected; redirected to %s" % headers['Location'])
-            if (headers['Location'] != 'login.php'):
-                return urllib2.HTTPRedirectHandler.http_error_302(self, req, fp, code, msg, headers)
-            else:
-                raise Base.NotLoggedInHTTPError(req.get_full_url(), code, msg, headers, fp)
-
-    def getSearchParams(self, movie, quality):
-        results = []
-        MovieTitles = movie['info']['titles']
-        moviequality = simplifyString(quality['identifier'])
-        moviegenre = movie['info']['genres']
-        if 'Animation' in moviegenre:
-            subcat=455
-        elif 'Documentaire' in moviegenre or 'Documentary' in moviegenre:
-            subcat=634
-        else:
-            subcat=631
-        if moviequality in ['720p']:
-            qualpar="&term%5B17%5D%5B%5D=541&term%5B17%5D%5B%5D=542&term%5B17%5D%5B%5D=719&term%5B17%5D%5B%5D=1160&term%5B17%5D%5B%5D=722&term%5B7%5D%5B%5D=15&term%5B7%5D%5B%5D=12&term%5B7%5D%5B%5D=1175"
-        elif moviequality in ['1080p']:
-            qualpar="&term%5B17%5D%5B%5D=541&term%5B17%5D%5B%5D=542&term%5B17%5D%5B%5D=719&term%5B17%5D%5B%5D=1160&term%5B17%5D%5B%5D=722&term%5B7%5D%5B%5D=16&term%5B7%5D%5B%5D=1162&term%5B7%5D%5B%5D=1174"
-        elif moviequality in ['dvd-r','dvdr']:
-            qualpar="&term%5B17%5D%5B%5D=541&term%5B17%5D%5B%5D=542&term%5B17%5D%5B%5D=719&term%5B17%5D%5B%5D=1160&term%5B17%5D%5B%5D=722&term%5B7%5D%5B%5D=13&term%5B7%5D%5B%5D=14"
-        elif moviequality in ['br-disk']:
-            qualpar="&term%5B17%5D%5B%5D=541&term%5B17%5D%5B%5D=542&term%5B17%5D%5B%5D=719&term%5B17%5D%5B%5D=1160&term%5B17%5D%5B%5D=722&term%5B7%5D%5B%5D=1171&term%5B7%5D%5B%5D=17"
-        elif moviequality in ['2160p']:
-            qualpar="&term%5B17%5D%5B%5D=541&term%5B17%5D%5B%5D=722&term%5B17%5D%5B%5D=542&term%5B17%5D%5B%5D=1160&term%5B17%5D%5B%5D=719&term%5B7%5D%5B%5D=1219&term%5B7%5D%5B%5D=1235&term%5B7%5D%5B%5D=1182"
-        else:
-            qualpar="&term%5B17%5D%5B%5D=541&term%5B17%5D%5B%5D=542&term%5B17%5D%5B%5D=719&term%5B17%5D%5B%5D=1160&term%5B17%5D%5B%5D=722&term%5B7%5D%5B%5D=8&term%5B7%5D%5B%5D=9&term%5B7%5D%5B%5D=10&term%5B7%5D%5B%5D=11&term%5B7%5D%5B%5D=18&term%5B7%5D%5B%5D=19"
-        if quality['custom']['3d']==1:
-            qualpar=qualpar+"&term%5B9%5D%5B%5D=24&term%5B9%5D%5B%5D=23"
-
-        for MovieTitle in MovieTitles:
-            try:
-                TitleStringReal = str(MovieTitle.encode("latin-1").replace('-',' '))
-            except:
-                continue
-            try:
-                results.append(urllib.urlencode( {'search': TitleStringReal, 'cat' : 210, 'submit' : 'Recherche', 'subcat': subcat } ) + qualpar)
-                results.append(urllib.urlencode( {'search': simplifyString(unicode(TitleStringReal,"latin-1")), 'cat' : 210, 'submit' : 'Recherche', 'subcat': subcat } ) + qualpar)
-            except:
-                continue
-
-        return results
-
+    auth_token = ''
+   
     def _search(self, movie, quality, results):
+        headers = {}
+        headers['Authorization'] = self.auth_token
 
-        # Cookie login
-        if not self.last_login_check and not self.login():
-            return
-        searchStrings= self.getSearchParams(movie,quality)
-        lastsearch=0
-        for searchString in searchStrings:
-            actualtime=int(time.time())
-            if actualtime-lastsearch<10:
-                timetosleep= 10-(actualtime-lastsearch)
-                time.sleep(timetosleep)
-            URL = self.urls['search']+searchString
+        for title in movie['info']['titles']:
+           try:
+                TitleStringReal = str(title.encode("latin-1").replace('-',' '))
+            
+                url = self.urls['search'] % TitleStringReal
+                url = url + '?cat=631&limit=100'
+                data = self.getJsonData(url, None, headers = headers)
 
-            r = self.opener.open(URL)
-            soup = BeautifulSoup( r, "html.parser" )
-            if soup.find('table', attrs = {'class':'results'}):
-                resultdiv = soup.find('table', attrs = {'class':'results'}).find('tbody')
-            else:
-                continue
-            if resultdiv:
-                try:
-                    for result in resultdiv.findAll('tr'):
-                        try:
-                            categorie = result.findAll('td')[0].findAll('a')[0]['href'][result.findAll('td')[0].findAll('a')[0]['href'].find('='):]
-                            insert = 0
+                for currentresult in data['torrents']:
+                    if currentresult['categoryname'] in ['Film', 'Animation']:
+                        name = currentresult['name']
+                        splittedReleaseName = re.split('(?:\(|\.|\s)([0-9]{4})(?:\)|\.|\s)', name, flags=re.IGNORECASE)
 
-                            if categorie == '=631':
-                                insert = 1
-                            if categorie == '=455':
-                                insert = 1
-                            if categorie == '=634':
-                                insert = 1
+                        if len(splittedReleaseName) > 1:
+                            cleanedReleaseName = ''.join(splittedReleaseName[0:-2])
 
-                            if insert == 1 :
+                            match = re.compile(ur"[\w]+", re.UNICODE)
+                            nameSplit = ''.join(match.findall(unicodedata.normalize('NFKD', cleanedReleaseName.upper()).encode('ASCII','ignore')))
+                            titleSplit = ''.join(match.findall(unicodedata.normalize('NFKD', title.upper()).encode('ASCII','ignore')))
 
+                            if titleSplit == nameSplit:
                                 new = {}
-
-                                idt = result.findAll('td')[2].findAll('a')[0]['href'][1:].replace('torrents/nfo/?id=','')
-                                name = result.findAll('td')[1].findAll('a')[0]['title']
-                                testname=namer_check.correctName(name,movie)
-                                if testname==0:
-                                    continue
-                                url = ('https://www.t411.ch/torrents/download/?id=%s' % idt)
-                                detail_url = ('https://www.t411.ch/torrents/?id=%s' % idt)
-                                leecher = result.findAll('td')[8].text
-                                size = result.findAll('td')[5].text
-                                age = result.findAll('td')[4].text
-                                seeder = result.findAll('td')[7].text
-
-                                def extra_check(item):
-                                    return True
-
-                                new['id'] = idt
-                                new['name'] = name + ' french'
-                                new['url'] = url
-                                new['detail_url'] = detail_url
-                                new['size'] = self.parseSize(str(size))
-                                new['age'] = self.ageToDays(str(age))
-                                new['seeders'] = tryInt(seeder)
-                                new['leechers'] = tryInt(leecher)
-                                new['extra_check'] = extra_check
-                                new['download'] = self.download
-
+                                new['id'] = currentresult['id']
+                                new['name'] = name
+                                new['url'] =  self.urls['download'] % (currentresult['id'])
+                                new['detail_url'] = self.urls['torrent'] % (currentresult['rewritename'])
+                                new['size'] = tryInt(currentresult['size']) / 1024 / 1024
+                                new['seeders'] = tryInt(currentresult['seeders'])
+                                new['leechers'] = tryInt(currentresult['leechers'])
+                                new['authtoken'] = self.auth_token
+                                new['download'] = self.loginDownload
+                         
                                 results.append(new)
+           except:
+                continue
 
-                        except:
-                            log.error('Failed parsing T411: %s', traceback.format_exc())
-
-                except AttributeError:
-                    log.debug('No search results found.')
-            else:
-                log.debug('No search results found.')
-
-    def ageToDays(self, age_str):
-        age = 0
-        age_str = age_str.replace('&nbsp;', ' ')
-        regex = '(\d*.?\d+).(sec|heure|heures|jour|jours|semaine|semaines|mois|ans|an)+'
-        matches = re.findall(regex, age_str)
-        for match in matches:
-            nr, size = match
-            mult = 0
-            if size in ('jour','jours'):
-                mult = 1
-            if size in ('semaine','semaines'):
-                mult = 7
-            elif size == 'mois':
-                mult = 30
-            elif size in ('ans','an'):
-                mult = 365
-
-            age += tryInt(nr) * mult
-
-        return tryInt(age)
-
-    def login(self):
-
-        self.opener.addheaders = [
-            ('User-Agent', 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.1 (KHTML, like Gecko)'),
-            ('Accept', 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8'),
-            ('Accept-Language', 'fr-fr,fr;q=0.5'),
-            ('Accept-Charset', 'ISO-8859-1,utf-8;q=0.7,*;q=0.7'),
-            ('Keep-Alive', '115'),
-            ('Connection', 'keep-alive'),
-            ('Cache-Control', 'max-age=0'),
-        ]
-
-        try:
-            response = self.opener.open('https://www.t411.ch/users/login/', self.getLoginParams())
-        except urllib2.URLError as e:
-            log.error('Login to T411 failed: %s' % e)
-            return False
-
-        if response.getcode() == 200:
-            log.debug('Login HTTP T411 status 200; seems successful')
-            self.last_login_check = self.opener
-            return True
-        else:
-            log.error('Login to T411 failed: returned code %d' % response.getcode())
-            return False
+        return
 
     def getLoginParams(self):
-        return tryUrlencode({
-             'login': self.conf('username'),
-             'password': self.conf('password'),
-             'remember': '1',
-             'url': '/'
-        })
+        return {
+            'username': self.conf('username'),
+            'password': self.conf('password')
+        }
 
-
-    def download(self, url = '', nzb_id = ''):
-        if not self.last_login_check and not self.login():
-            return
+    def loginSuccess(self, output):
         try:
-            request = urllib2.Request(url)
-
-            response = self.last_login_check.open(request)
-            # unzip if needed
-            if response.info().get('Content-Encoding') == 'gzip':
-                buf = StringIO(response.read())
-                f = gzip.GzipFile(fileobj = buf)
-                data = f.read()
-                f.close()
-            else:
-                data = response.read()
-            response.close()
-            return data
+            jsonData = json.loads(output)
+            if jsonData.get('uid', '') != '':
+                self.auth_token = jsonData.get('token', '')
+                return True
         except:
-            return 'try_next'
+            pass
+
+        return False
+
+    loginCheckSuccess = loginSuccess
+
+    def loginDownload(self, url = '', nzb_id = ''):
+        try:
+            if not self.login():
+                log.error('Failed downloading from %s', self.getName())
+
+            headers = {}
+            headers['Authorization'] = self.auth_token
+            return self.urlopen(url, None, headers = headers)
+        except:
+            log.error('Failed downloading from %s: %s', (self.getName(), traceback.format_exc()))
 
 config = [{
     'name': 't411',
