@@ -35,6 +35,7 @@ class TheMovieDb(MovieProvider):
         addEvent('info.search', self.search, priority = 1)
         addEvent('movie.search', self.search, priority = 1)
         addEvent('movie.info', self.getInfo, priority = 1)
+        addEvent('movie.getfrenchtitle', self.getFrenchTitle)
         addEvent('movie.info_by_tmdb', self.getInfo)
         addEvent('app.load', self.config)
 
@@ -104,6 +105,16 @@ class TheMovieDb(MovieProvider):
                 return False
 
         return results
+    def getFrenchTitle(self, movie):
+        movie = self.request('movie/%s' % movie.get('info').get('tmdb_id'), {
+            'append_to_response': '',
+            'language': 'fr'
+        })
+
+        if not movie:
+            return
+
+        return movie.get('title')
 
     def getInfo(self, identifier = None, extended = True, **kwargs):
 
@@ -243,7 +254,7 @@ class TheMovieDb(MovieProvider):
         params = tryUrlencode(params)
 
         try:
-            url = 'https://api.themoviedb.org/3/%s?api_key=%s&language=fr%s' % (call, self.getApiKey(), '&%s' % params if params else '')
+            url = 'https://api.themoviedb.org/3/%s?api_key=%s%s' % (call, self.getApiKey(), '&%s' % params if params else '')
             data = self.getJsonData(url, show_error = False)
         except:
             log.debug('Movie not found: %s, %s', (call, params))

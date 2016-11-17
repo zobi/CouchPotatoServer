@@ -287,6 +287,12 @@ class Renamer(Plugin):
 
                 media = group['media']
                 media_title = getTitle(media)
+                fr_media_title = media_title
+
+                res = fireEvent('movie.getfrenchtitle', movie = media)
+
+                if res != None and len(res) > 0:
+                    fr_media_title = res[0]
 
                 # Overwrite destination when set in category
                 destination = to_folder
@@ -316,6 +322,7 @@ class Renamer(Plugin):
 
                 # Remove weird chars from movie name
                 movie_name = re.sub(r"[\x00\/\\:\*\?\"<>\|]", '', media_title)
+                fr_movie_name = re.sub(r"[\x00\/\\:\*\?\"<>\|]", '', fr_media_title)
 
                 # Put 'The' at the end
                 name_the = movie_name
@@ -324,10 +331,18 @@ class Renamer(Plugin):
                         name_the = movie_name[len(prefix):] + ', ' + prefix.strip().capitalize()
                         break
 
+                fr_name_the = fr_movie_name
+                for prefix in ['le ', 'la ']:
+                    if prefix == fr_movie_name[:len(prefix)].lower():
+                        name_the = fr_movie_name[len(prefix):] + ', ' + prefix.strip().capitalize()
+                        break
+
                 replacements = {
                     'ext': 'mkv',
                     'namethe': name_the.strip(),
                     'thename': movie_name.strip(),
+                    'frnamethe': fr_name_the.strip(),
+                    'frthename': fr_movie_name.strip(),
                     'year': media['info']['year'],
                     'first': name_the[0].upper(),
                     'quality': group['meta_data']['quality']['label'],
@@ -1292,6 +1307,8 @@ rename_options = {
         'ext': 'Extension (mkv)',
         'namethe': 'Moviename, The',
         'thename': 'The Moviename',
+        'frnamethe': 'NomDuFilm, Le',
+        'frthename': 'Le NomDuFilm',
         'year': 'Year (2011)',
         'first': 'First letter (M)',
         'quality': 'Quality (720p)',
