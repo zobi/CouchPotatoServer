@@ -18,12 +18,12 @@ log = CPLog(__name__)
 class Base(TorrentProvider):
 
     urls = {
-        'domain': 'https://tls.passthepopcorn.me',
-        'detail': 'https://tls.passthepopcorn.me/torrents.php?torrentid=%s',
-        'torrent': 'https://tls.passthepopcorn.me/torrents.php',
-        'login': 'https://tls.passthepopcorn.me/ajax.php?action=login',
-        'login_check': 'https://tls.passthepopcorn.me/ajax.php?action=login',
-        'search': 'https://tls.passthepopcorn.me/search/%s/0/7/%d'
+        'domain': 'https://passthepopcorn.me',
+        'detail': 'https://passthepopcorn.me/torrents.php?torrentid=%s',
+        'torrent': 'https://passthepopcorn.me/torrents.php',
+        'login': 'https://passthepopcorn.me/ajax.php?action=login',
+        'login_check': 'https://passthepopcorn.me/ajax.php?action=login',
+        'search': 'https://passthepopcorn.me/search/%s/0/7/%d'
     }
 
     login_errors = 0
@@ -204,7 +204,7 @@ config = [{
             'tab': 'searcher',
             'list': 'torrent_providers',
             'name': 'PassThePopcorn',
-            'description': '<a href="https://passthepopcorn.me">PassThePopcorn.me</a>',
+            'description': '<a href="https://passthepopcorn.me" target="_blank">PassThePopcorn.me</a>',
             'wizard': True,
             'icon': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAIAAACQkWg2AAAARklEQVQoz2NgIAP8BwMiGWRpIN1JNWn/t6T9f5'
                     '32+W8GkNt7vzz9UkfarZVpb68BuWlbnqW1nU7L2DMx7eCoBlpqGOppCQB83zIgIg+wWQAAAABJRU5ErkJggg==',
@@ -218,7 +218,7 @@ config = [{
                     'name': 'domain',
                     'advanced': True,
                     'label': 'Proxy server',
-                    'description': 'Domain for requests (HTTPS only!), keep empty to use default (tls.passthepopcorn.me).',
+                    'description': 'Domain for requests (HTTPS only!), keep empty to use default (passthepopcorn.me).',
                 },
                 {
                     'name': 'username',
