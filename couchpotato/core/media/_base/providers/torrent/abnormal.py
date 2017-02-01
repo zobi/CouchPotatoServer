@@ -51,8 +51,8 @@ class Base(TorrentProvider):
                               nameCell = torrentRow.find_all('td')[1]
                               downloadCell = torrentRow.find_all('td')[3]
                               sizeCell = torrentRow.find_all('td')[4]
-                              seedersCell = torrentRow.find_all('td')[6]
-                              leechersCell = torrentRow.find_all('td')[7]
+                              seedersCell = torrentRow.find_all('td')[5]
+                              leechersCell = torrentRow.find_all('td')[6]
 
                               name = nameCell.find_all('a')[0].get_text().upper()
 
