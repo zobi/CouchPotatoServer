@@ -263,6 +263,12 @@ config = [{
                     'description': 'The port I should listen to.',
                 },
                 {
+                    'name': 'languages',
+                    'default': 'fr, en',
+                    'ui-meta' : 'rw',
+                    'description': 'Langue pour le titre des films',
+                },
+                {
                     'name': 'ipv6',
                     'default': 0,
                     'type': 'bool',
@@ -292,6 +298,7 @@ config = [{
                     'description': 'For people with sensitive skin',
                     'wizard': True,
                 },
+
             ],
         },
         {
