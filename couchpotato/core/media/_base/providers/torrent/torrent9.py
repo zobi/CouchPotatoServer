@@ -31,7 +31,7 @@ class Base(TorrentProvider):
 
                 URL = ((self.urls['search'])+TitleStringReal.replace('.', '-').replace(' ', '-')+'.html,trie-seeds-d').encode('utf-8')
 
-                req = urllib2.Request(URL, headers={'User-Agent' : "Mozilla/5.0"})
+                req = urllib2.Request(URL, headers={'User-Agent' : "Mozilla/5.0"} )
                 log.info('opening url %s', URL)
                 data = urllib2.urlopen(req,timeout=10)
 
@@ -107,7 +107,7 @@ class Base(TorrentProvider):
 
     def download(self, url = '', nzb_id = ''):
         log.debug('download %s',url)
-        req = urllib2.Request(url)
+        req = urllib2.Request(url, headers={'User-Agent' : "Mozilla/5.0"} )
         try:
             return urllib2.urlopen(req).read()
         except:
