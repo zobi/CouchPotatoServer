@@ -206,6 +206,7 @@
     <Compile Include="couchpotato\core\media\movie\providers\torrent\rarbg.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\sceneaccess.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\scenetime.py" />
+    <Compile Include="couchpotato\core\media\movie\providers\torrent\torrent9.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\xthor.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\t411.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\thepiratebay.py" />
@@ -770,6 +771,7 @@
     <Compile Include="couchpotato\core\media\_base\providers\torrent\rarbg.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\sceneaccess.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\scenetime.py" />
+    <Compile Include="couchpotato\core\media\_base\providers\torrent\torrent9.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\xthor.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\t411.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\thepiratebay.py" />
