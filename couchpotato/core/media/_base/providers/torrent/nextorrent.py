@@ -234,7 +234,7 @@ class Base(TorrentProvider):
         except:
             log.error('Failed downloading from %s: %s', (self.getName(), traceback.format_exc()))
 config = [{
-    'name': 'zetorrents',
+    'name': 'nextorrent',
     'groups': [
         {
             'tab': 'searcher',
