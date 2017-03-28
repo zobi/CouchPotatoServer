@@ -191,6 +191,7 @@
     <Compile Include="couchpotato\core\media\movie\providers\torrent\awesomehd.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\bithdtv.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\bitsoup.py" />
+    <Compile Include="couchpotato\core\media\movie\providers\torrent\cpasbien.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\hd4free.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\hdbits.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\hdonly.py">
@@ -202,10 +203,12 @@
     <Compile Include="couchpotato\core\media\movie\providers\torrent\ilovetorrents.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\iptorrents.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\kickasstorrents.py" />
+    <Compile Include="couchpotato\core\media\movie\providers\torrent\nextorrent.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\passthepopcorn.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\rarbg.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\sceneaccess.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\scenetime.py" />
+    <Compile Include="couchpotato\core\media\movie\providers\torrent\t411api.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\torrent9.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\xthor.py" />
     <Compile Include="couchpotato\core\media\movie\providers\torrent\t411.py" />
@@ -756,6 +759,7 @@
     <Compile Include="couchpotato\core\media\_base\providers\torrent\base.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\bithdtv.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\bitsoup.py" />
+    <Compile Include="couchpotato\core\media\_base\providers\torrent\cpasbien.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\hd4free.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\hdbits.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\hdonly.py">
@@ -767,10 +771,12 @@
     <Compile Include="couchpotato\core\media\_base\providers\torrent\ilovetorrents.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\iptorrents.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\kickasstorrents.py" />
+    <Compile Include="couchpotato\core\media\_base\providers\torrent\nextorrent.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\passthepopcorn.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\rarbg.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\sceneaccess.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\scenetime.py" />
+    <Compile Include="couchpotato\core\media\_base\providers\torrent\t411api.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\torrent9.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\xthor.py" />
     <Compile Include="couchpotato\core\media\_base\providers\torrent\t411.py" />

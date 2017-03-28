@@ -21,7 +21,7 @@ class Base(TorrentProvider):
         url = self.urls['search'] % {'passkey': self.conf('passkey'), 'tmdbid': movie['info']['tmdb_id'] }
         data = self.getJsonData(url)
 
-        if data[u'error'][u'code'] == 0:
+        if data[u'error'][u'code'] == 0 and 'torrents' in data:
             for currentresult in data['torrents']:
                 new = {}
 
