@@ -240,7 +240,7 @@ config = [{
             'tab': 'searcher',
             'list': 'torrent_providers',
             'name': 'nextorrent',
-            'description': 'See <a href="https://www.nextorrent.com/">nextorrent</a>',
+            'description': 'See <a href="https://www.nextorrent.net/">nextorrent</a>',
             'icon': 'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAIGNIUk0AAHolAACAgwAA+f8AAIDpAAB1MAAA6mAAADqYAAAXb5JfxUYAAAI5SURBVHjabJM/T+NAEMV/u57YsQ05pBS00EQiJFKIoOGTUFFDQY0QfAFo4FNQI0FDg+iogPTuafJHCiaOUbzra7DPubuVRlqtZt68eW9W+b7/sbGxsaK1BsBaS5ZlKKXKyPO8vBd5P7lforX+1ev1gna7XQIMBgPe398REUQEpRRpmrK1tcXu7i6e55FlGa+vr444jmP29vY4ODjAGEOtViOKIm5ubnh5eSEIAkSE7+9vWq0Wh4eHrK6ukiQJs9nM6CrtxWLBfD6n1WpxcnJCv99nNpthjEEpVeYVYa3lz0A/J89zkiSh0+lwenpKv98njmOMMfzv6DzPl4q11ogIcRzT6XQ4Ozuj2+0ynU5LkGqNLlQuipMkIY5jgiBgMpnQ7XY5Pz+n3W7z+fmJMWbJCV21yPM8hsMht7e3RFFEs9lkNBrR6/W4uLhgZ2cHYwzW2hJAqpQcx8FxHJ6enhgMBlxdXbG+vs54PGZ/f5/t7W2UUkt6aAClVDmbiNBoNHh+fuby8pLhcMja2hrz+Rzf96nVav9q8LcLIkIYhjw+PnJ9fc1oNCIMQ7IsK/UqGkv1ocrG8zwcx+H+/p56vc7x8TGNRoM0TZcZK6UQETzPK0NrjbWWMAwBuLu7Q2vN0dERzWaTxWJR6iXWWt7e3siyDBFhMpkwHo9xXZc8z6nX66RpysPDQ7mlhRNRFKF8359tbm4Ghbd5ni8tTEG36Oq6bvU3Jsp13Q+l1EpVmOqiFCCFVksOaP31ewAjgDxHOfDVqAAAAABJRU5ErkJggg==',
             'wizard': True,
             'options': [
